@@ -170,11 +170,11 @@ foreach my $node (@$data) {
 
     next if grep { $certname eq $_ } @ignore_list;
 
-    if ( !defined $deactivated and ( !length $catalog_timestamp or !length $report_hash )) {
+    if ( !defined $deactivated and !length $catalog_timestamp ) {
     	    $np->add_message( CRITICAL, 
     		    "$certname last run UNAVAILABLE\n" );
     }
-    if ( !defined $deactivated and length $catalog_timestamp and $report_hash) {
+    if ( !defined $deactivated and length $catalog_timestamp ) {
         my $delta = ( $now - $ts );
         if ( $delta > ( $np->opts->critical * 60 ) ) {
             $np->add_message( CRITICAL,
@@ -223,7 +223,7 @@ foreach my $node (@$data) {
                 $np->add_message( WARNING,
                     "$certname had $failures failures in the last run\n" );
             }
-            elsif ( exists $apiurls{$np->opts->apiversion}{'logs'} ) {
+            elsif ( exists $apiurls{$np->opts->apiversion}{'logs'} and $report_hash) {
                 my $apiurl = $apiurls{$np->opts->apiversion}{'logs'};
                 $apiurl =~ s/{hash}/$report_hash/;
                 $uri = URI->new( $url . $apiurl );
